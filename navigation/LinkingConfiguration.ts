@@ -1,9 +1,3 @@
-/**
- * Learn more about deep linking with React Navigation
- * https://reactnavigation.org/docs/deep-linking
- * https://reactnavigation.org/docs/configuring-links
- */
-
 import { LinkingOptions } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 
@@ -15,20 +9,26 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          Join: {
             screens: {
-              TabOneScreen: 'one',
+              JoinParty: 'join',
             },
           },
-          TabTwo: {
+          MyParties: {
             screens: {
-              TabTwoScreen: 'two',
+              MyParties: 'myparty',
+            },
+          },
+          CreateParty: {
+            screens: {
+              CreateParty: 'createparty',
             },
           },
         },
       },
       Modal: 'modal',
       NotFound: '*',
+      Party: 'party/:id',
     },
   },
 };
