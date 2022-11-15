@@ -1,4 +1,5 @@
 import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -50,7 +51,22 @@ const RootNavigator = () => {
         component={NotFoundScreen}
         options={{ title: "Oops!" }}
       />
-      <Stack.Screen name="Party" component={PartyScreen} />
+      <Stack.Screen
+        name="Party"
+        component={PartyScreen}
+        options={{
+          headerRight: () => (
+            <Pressable>
+              <AntDesign
+                name="link"
+                size={25}
+                color="white"
+                style={{ marginRight: 15 }}
+              />
+            </Pressable>
+          ),
+        }}
+      />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>

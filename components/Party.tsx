@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, FC } from "react";
 import { supabase } from "../lib/supabase";
 import {
   StyleSheet,
   View,
-  Text,
   Image,
   ScrollView,
   Dimensions,
@@ -11,6 +10,8 @@ import {
   RefreshControl,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { RootStackParamList } from "../types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
 export type PartyImage = {
   id: string;
@@ -29,11 +30,16 @@ export type Party = {
 
 const deviceWidth = Dimensions.get("window").width;
 
-const Party = (partyId: { partyId: string }) => {
+interface PartyProps {
+  partyId: string;
+  navigation: NativeStackNavigationProp<RootStackParamList, "Party", undefined>;
+}
+
+const Party: FC<PartyProps> = (props) => {
+  const { partyId, navigation } = props;
   const [party, setParty] = useState<Party>();
   const [refreshing, setRefreshing] = useState(false);
-
-  console.log(partyId.partyId);
+  navigation.setOptions({ title: party?.name });
 
   useEffect(() => {
     getParty();
@@ -45,7 +51,7 @@ const Party = (partyId: { partyId: string }) => {
       .select(
         "name, id, user_id, images(id, image_url, image_text, created_at)"
       )
-      .eq("party_id", partyId.partyId)
+      .eq("party_id", partyId)
       .single();
 
     if (error && status !== 406) {
@@ -79,7 +85,7 @@ const Party = (partyId: { partyId: string }) => {
 
     if (!result.cancelled) {
       const fileExt = result.uri.split(".").pop();
-      const generatedFileName = `${partyId.partyId}${Math.random()}.${fileExt}`;
+      const generatedFileName = `${partyId}${Math.random()}.${fileExt}`;
 
       const formData = new FormData();
       formData.append(
@@ -124,9 +130,6 @@ const Party = (partyId: { partyId: string }) => {
     >
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Button title="Add a picture to the party" onPress={pickImage} />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Text style={styles.text}>{party?.name}</Text>
       </View>
       <View style={styles.container}>{images}</View>
     </ScrollView>

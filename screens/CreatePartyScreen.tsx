@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StyleSheet, TextInput } from "react-native";
 import { Text, View } from "../components/Themed";
 import { supabase } from "../lib/supabase";
+import { RootTabScreenProps } from "../types";
 
 const createRandomPartyId = () => {
   const characters =
@@ -15,13 +16,17 @@ const createRandomPartyId = () => {
   return id;
 };
 
-const createParty = async (name: string) => {
-  const partyId = createRandomPartyId();
-  await supabase.from("parties").insert({ party_id: partyId, name: name });
-};
-
-const CreatePartyScreen = () => {
+const CreatePartyScreen = ({
+  navigation,
+}: RootTabScreenProps<"CreateParty">) => {
   const [inputText, setInputText] = useState("");
+  const createPartyAndNavigate = async (name: string) => {
+    const partyId = createRandomPartyId();
+    await supabase
+      .from("parties")
+      .insert({ party_id: partyId, name: name })
+      .then(() => navigation.navigate("Party", { partyId: partyId }));
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create party</Text>
@@ -32,7 +37,7 @@ const CreatePartyScreen = () => {
         onChangeText={(text: string) => setInputText(text)}
         onSubmitEditing={() => {
           setInputText("");
-          createParty(inputText);
+          createPartyAndNavigate(inputText);
         }}
       />
     </View>

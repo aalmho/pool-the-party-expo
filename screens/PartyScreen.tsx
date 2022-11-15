@@ -8,7 +8,7 @@ const PartyScreen = ({ navigation, route }: RootStackScreenProps<"Party">) => {
   const { partyId } = route.params;
   return (
     <View style={styles.container}>
-      <Party partyId={partyId} />
+      <Party partyId={partyId} navigation={navigation} />
     </View>
   );
 };
