@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
 import MyParties from "../components/MyParties";
-import { Text, View } from "../components/Themed";
+import { View } from "../components/Themed";
+import { RootTabScreenProps } from "../types";
 
-const MyPartiesScreen = () => {
+const MyPartiesScreen = ({ navigation }: RootTabScreenProps<"MyParties">) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your parties</Text>
-      <MyParties />
+      <MyParties navigation={navigation} />
     </View>
   );
 };

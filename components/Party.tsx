@@ -8,10 +8,12 @@ import {
   Dimensions,
   Button,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { RootStackParamList } from "../types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type PartyImage = {
   id: string;
@@ -64,7 +66,7 @@ const Party: FC<PartyProps> = (props) => {
     }
   };
 
-  const insertImageReference = async (fileName: string) => {
+  const insertImageReference = async (fileName: string, user_key: string) => {
     const imagePath = "/storage/v1/object/public/images/";
     const publicUrl =
       "https://hgarommhvwvvrhwvsebz.supabase.co" + imagePath + fileName;
@@ -72,10 +74,12 @@ const Party: FC<PartyProps> = (props) => {
       image_text: fileName,
       party_id: party?.id,
       image_url: publicUrl,
+      user_key: JSON.parse(user_key),
     });
   };
 
   const pickImage = async () => {
+    const user_key = await AsyncStorage.getItem("@user_key");
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -98,8 +102,14 @@ const Party: FC<PartyProps> = (props) => {
           })
         )
       );
-      await supabase.storage.from("images").upload(generatedFileName, formData);
-      insertImageReference(generatedFileName).then(() => getParty());
+      if (user_key) {
+        await supabase.storage
+          .from("images")
+          .upload(generatedFileName, formData);
+        insertImageReference(generatedFileName, user_key).then(() =>
+          getParty()
+        );
+      }
     }
   };
 
@@ -114,11 +124,14 @@ const Party: FC<PartyProps> = (props) => {
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
     .map((img) => (
-      <Image
+      <TouchableOpacity
         key={img.id}
-        style={styles.image}
-        source={{ uri: img.image_url }}
-      ></Image>
+        onPress={() =>
+          navigation.navigate("Image", { imageUrl: img.image_url })
+        }
+      >
+        <Image style={styles.image} source={{ uri: img.image_url }}></Image>
+      </TouchableOpacity>
     ));
 
   return (

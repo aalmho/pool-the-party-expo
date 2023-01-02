@@ -1,4 +1,9 @@
-import { StyleSheet, TextInput } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { Text, View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
 import React, { useState } from "react";
@@ -7,25 +12,29 @@ const JoinPartyScreen = ({ navigation }: RootTabScreenProps<"Join">) => {
   const [inputText, setInputText] = useState("");
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Join</Text>
-      <Text style={styles.subTitle}>The party starts and ends here</Text>
-      <TextInput
-        style={styles.input}
-        value={inputText}
-        placeholder="Enter party code"
-        onChangeText={(text: string) => setInputText(text)}
-        onSubmitEditing={() => {
-          setInputText("");
-          navigation.navigate("Party", { partyId: inputText });
-        }}
-      />
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Join</Text>
+        <Text style={styles.subTitle}>The party starts and ends here</Text>
+        <TextInput
+          style={styles.input}
+          value={inputText}
+          placeholder="Enter party code"
+          onChangeText={(text: string) => setInputText(text)}
+          onSubmitEditing={() => {
+            if (inputText.length > 0) {
+              setInputText("");
+              navigation.navigate("Party", { partyId: inputText });
+            }
+          }}
+        />
+        <View
+          style={styles.separator}
+          lightColor="#eee"
+          darkColor="rgba(255,255,255,0.1)"
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

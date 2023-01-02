@@ -24,6 +24,7 @@ import {
 } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 import PartyScreen from "../screens/PartyScreen";
+import ImageScreen from "../screens/ImageScreen";
 
 const Navigation = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
   return (
@@ -56,7 +57,7 @@ const RootNavigator = () => {
         component={PartyScreen}
         options={{
           headerRight: () => (
-            <Pressable>
+            <Pressable onPress={() => console.log("link")}>
               <AntDesign
                 name="link"
                 size={25}
@@ -67,6 +68,7 @@ const RootNavigator = () => {
           ),
         }}
       />
+      <Stack.Screen name="Image" component={ImageScreen} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>

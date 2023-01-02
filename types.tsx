@@ -16,6 +16,7 @@ export type RootStackParamList = {
   Modal: undefined;
   NotFound: undefined;
   Party: { partyId: string };
+  Image: { imageUrl: string };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

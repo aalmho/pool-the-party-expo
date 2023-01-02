@@ -1,5 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
-import { StyleSheet, TextInput } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { Text, View } from "../components/Themed";
 import { supabase } from "../lib/supabase";
 import { RootTabScreenProps } from "../types";
@@ -21,26 +27,36 @@ const CreatePartyScreen = ({
 }: RootTabScreenProps<"CreateParty">) => {
   const [inputText, setInputText] = useState("");
   const createPartyAndNavigate = async (name: string) => {
+    const user_key = await AsyncStorage.getItem("@user_key");
     const partyId = createRandomPartyId();
-    await supabase
-      .from("parties")
-      .insert({ party_id: partyId, name: name })
-      .then(() => navigation.navigate("Party", { partyId: partyId }));
+    if (user_key) {
+      await supabase
+        .from("parties")
+        .insert({
+          party_id: partyId,
+          name: name,
+          user_key: JSON.parse(user_key),
+        })
+        .then(() => navigation.navigate("Party", { partyId: partyId }));
+    }
   };
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create party</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter party name"
-        value={inputText}
-        onChangeText={(text: string) => setInputText(text)}
-        onSubmitEditing={() => {
-          setInputText("");
-          createPartyAndNavigate(inputText);
-        }}
-      />
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter party name"
+          value={inputText}
+          onChangeText={(text: string) => setInputText(text)}
+          onSubmitEditing={() => {
+            if (inputText.length > 0) {
+              setInputText("");
+              createPartyAndNavigate(inputText);
+            }
+          }}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
